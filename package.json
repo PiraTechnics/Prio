@@ -2,9 +2,11 @@
   "name": "prio",
   "version": "1.0.0",
   "description": "An application to help you prioritize whatcha need to get done",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack serve --open"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,9 @@
   },
   "homepage": "https://github.com/PiraTechnics/Prio#readme",
   "devDependencies": {
+    "html-webpack-plugin": "^5.5.1",
     "webpack": "^5.80.0",
-    "webpack-cli": "^5.0.2"
+    "webpack-cli": "^5.0.2",
+    "webpack-dev-server": "^4.13.3"
   }
 }
