@@ -5,6 +5,7 @@ import * as bootstrap from 'bootstrap'
 
 import { Todo } from "./todo";
 import { list } from "./ui";
+import { todoList } from './todoList';
 
   // To-Do Item DOM manupulation to add entries onto our page
   //hardcoded for now 
@@ -14,7 +15,10 @@ import { list } from "./ui";
   const item2 = new Todo('Do Taxes');
   const item3 = new Todo('Plot World Domination');
 
-  const myList = [];
+  /*const myList = [];
   myList.push(item1, item2, item3);
 
-  container.appendChild(list(myList, 'Default List'));
+  container.appendChild(list(myList, 'Default List'));*/
+
+  const myList = new todoList("Default List", [item1, item2, item3]);
+  container.appendChild(list(myList, myList.id));
