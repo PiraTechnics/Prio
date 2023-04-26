@@ -1,0 +1,18 @@
+// Import all of Bootstrap's CSS
+@import "bootstrap/scss/bootstrap";
+
+div.container {
+    width: 100vw;
+    height: auto;
+}
+
+div.listContainer {
+    border: 2px solid lightgray;
+    border-radius: 30px;
+    box-shadow: 1px 2px rgb(161, 159, 159);
+}
+
+p.listHeader {
+    padding: 10px 0px;
+    border-bottom: 2px solid lightgray;
+}
