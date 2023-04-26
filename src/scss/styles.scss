@@ -1,6 +1,10 @@
 // Import all of Bootstrap's CSS
 @import "bootstrap/scss/bootstrap";
 
+body {
+    background-color: rgb(71, 214, 190);
+}
+
 div.container {
     width: 100vw;
     height: auto;
@@ -10,6 +14,7 @@ div.listContainer {
     border: 2px solid lightgray;
     border-radius: 30px;
     box-shadow: 1px 2px rgb(161, 159, 159);
+    background-color: white;
 }
 
 p.listHeader {

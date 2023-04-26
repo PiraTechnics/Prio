@@ -38,7 +38,5 @@ export function list(todoList, name) {
     }
 
     listContainer.appendChild(domList);
-
-    
     return listContainer;
 }
