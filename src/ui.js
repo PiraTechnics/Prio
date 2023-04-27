@@ -1,12 +1,25 @@
 // Module to build UI components with applicable Bootstrap classes
+import exclamIcon from './assets/exclamation-lg.svg';
 
 function listItem(Todo, listIndex) {
     const entryContainer = document.createElement('tr');
     const entryCheckBox = createTableRowElement(createCheckBox(listIndex), 'td');
     const entryTitle = createTableRowElement(document.createTextNode(Todo.title), 'td');
     const entryDue = createTableRowElement(document.createTextNode(Todo.dueDate), 'td');
-    const entryImp = createTableRowElement(document.createTextNode(Todo.priority), 'td');
+    //const entryImp = createTableRowElement(document.createTextNode(Todo.priority), 'td');
     const entryUrg = createTableRowElement(document.createTextNode(Todo.urgent), 'td');
+
+    const exclam = new Image();
+    exclam.src = exclamIcon;
+    exclam.setAttribute('alt', 'Exclamation Mark');
+    exclam.setAttribute('width', 25);
+    exclam.setAttribute('height', 25);
+    //exclam.setAttribute('background-color', '#030303');
+    const impWrapper = document.createElement('div');
+    impWrapper.setAttribute('class', 'text-center');
+    impWrapper.appendChild(exclam);
+    const entryImp = createTableRowElement(impWrapper, 'td');
+
     entryContainer.append(entryCheckBox, entryTitle, entryDue, entryImp, entryUrg);
 
     return entryContainer;
@@ -14,7 +27,8 @@ function listItem(Todo, listIndex) {
 
 function createTableRowElement(entry, type, scope) {
     const element = document.createElement(type);
-    element.setAttribute('scope', scope);
+    
+    if(scope) {element.setAttribute('scope', scope)}
     element.appendChild(entry);
 
     return element;

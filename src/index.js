@@ -10,7 +10,7 @@ import { list } from "./ui";
   //hardcoded for now 
   const container = document.querySelector('.container');
 
-  const item1 = new Todo('Clean Kitchen');
+  const item1 = new Todo('Clean Kitchen', 'something something', 'July 4th', true);
   const item2 = new Todo('Do Taxes');
   const item3 = new Todo('Plot World Domination');
 
