@@ -124,6 +124,17 @@ function renderCheckBox(listIndex) {
         checkBox.setAttribute('id', 'placeholder');
     }
 
+    //When Checked, delete the item
+    checkBox.addEventListener('change', () => {
+        if(checkBox.checked) {
+            const tableRow = checkBox.parentNode.parentNode.parentNode;
+
+            //Perhaps animate the deletion -- highlight the row and fade it out or something?
+            console.log("Removing: " + tableRow.childNodes[1].innerText);
+            tableRow.parentNode.removeChild(tableRow);
+        }
+    })
+
     checkContainer.append(checkBox);
     return checkContainer;
 }
