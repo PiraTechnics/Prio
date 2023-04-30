@@ -17,6 +17,14 @@ div.listContainer {
     background-color: white;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
+.entryRow:hover {
+    background-color: lightgray;
+}
+
 .sortIcon {
     box-sizing: border-box;
     margin-bottom: 1px;

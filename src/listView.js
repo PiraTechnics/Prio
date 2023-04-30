@@ -83,8 +83,60 @@ function renderTableRow(Todo, listIndex) {
 
     entryContainer.append(entryCheckBox, entryTitle, entryDue, entryImp);
     entryContainer.classList.add('align-middle');
+    entryContainer.classList.add('entryRow');
+
+    //Add clickable functionality to Title, which brings up a description and editable forms in a modal
+    entryTitle.classList.add('clickable');
+    entryTitle.setAttribute('data-bs-toggle', 'modal');
+    entryTitle.setAttribute('data-bs-target', '#staticBackdrop' + listIndex);
+    entryContainer.appendChild(renderDetailModal(Todo, listIndex));
 
     return entryContainer;
+}
+
+function renderDetailModal(entry, index) {
+    const details = document.createElement('div');
+    details.setAttribute('class', 'modal fade');
+    details.setAttribute('id', 'staticBackdrop' + index);
+    details.setAttribute('data-bs-backdrop', 'static');
+    details.setAttribute('data-bs-keyboard', 'false');
+    details.setAttribute('tabindex', '-1');
+    //details.setAttribute('aria-labelledby', 'staticBackdropLabel');
+    details.setAttribute('aria-hidden', 'true');
+
+    const dialog = document.createElement('div');
+    dialog.setAttribute('class', 'modal-dialog');
+
+    const content = document.createElement('div');
+    content.setAttribute('class', 'modal-content');
+
+    const header = document.createElement('div');
+    header.setAttribute('class', 'modal-header justify-content-center');
+    const headerText = document.createElement('h1');
+    headerText.setAttribute('class', 'modal-title fs-5');
+    headerText.innerText = entry.title;
+    header.appendChild(headerText);
+
+    const body = document.createElement('div');
+    body.setAttribute('class', 'modal-body');
+
+    const footer = document.createElement('div');
+    footer.setAttribute('class', 'modal-footer');
+    
+    const saveButton = document.createElement('button');
+    saveButton.setAttribute('class', 'btn btn-primary');
+    saveButton.innerText = 'Save Changes';
+    const exitButton = document.createElement('button');
+    exitButton.setAttribute('class', 'btn btn-secondary');
+    exitButton.setAttribute('data-bs-dismiss', 'modal');
+    exitButton.innerText = 'Exit';
+
+    footer.append(exitButton, saveButton);
+    content.append(header, body, footer);
+    dialog.appendChild(content);
+    details.appendChild(dialog);
+
+    return details;
 }
 
 function renderRowElement(entry, type, scope) {
