@@ -2,7 +2,10 @@
 import exclamIcon from './assets/exclamation-lg.svg';
 import alarmIcon from './assets/alarm.svg';
 import chevronExpand from './assets/chevron-expand.svg';
+import chevronDoubleUp from './assets/chevron-double-up.svg';
+import chevronDoubleDown from './assets/chevron-double-down.svg';
 
+// ***MAIN TABLE RENDER FUNCTION***
 export function renderList(todoList, name) {
     const listContainer = document.createElement('div');
     listContainer.setAttribute('class', 'listContainer');
@@ -12,15 +15,11 @@ export function renderList(todoList, name) {
 
     table.appendChild(body);
     listContainer.appendChild(table);
+    //console.log("Table with " + table.rows.length + " rows added to DOM");
     
     return listContainer;
 }
-
-export function deleteTableRows(tableBody) {
-    while(tableBody.firstChild) {
-        tableBody.removeChild(tableBody.lastChild);
-    }
-}
+// ***TABLE ROW RENDERING/MANIPULATION FUNCTIONS ***
 
 function renderTableHeader() {
         //Create Table and link structure in DOM
@@ -38,16 +37,108 @@ function renderTableHeader() {
         checkBox.classList.add('invisible');
         const checkKey = renderRowElement(checkBox, 'th', 'col');
         const itemKey = renderRowElement(document.createTextNode('To-Do'), 'th', 'col');
-        itemKey.prepend(renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon'));
+        let sortIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon');
+        sortIcon.addEventListener('click', () => {
+            sortTable(table, sortIcon, 1);
+        })
+        itemKey.prepend(sortIcon);
         itemKey.classList.add('align-middle');
+        itemKey.setAttribute('id', 'entry-title');
         const dueDateKey = renderRowElement(document.createTextNode('Due'), 'th', 'col');
-        dueDateKey.prepend(renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon'));
+        let dueDateIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon');
+        dueDateIcon.addEventListener('click', () => {
+            sortTable(table, dueDateIcon, 2);
+        });
+        dueDateKey.prepend(dueDateIcon);
         dueDateKey.classList.add('align-middle');
+        dueDateKey.setAttribute('id', 'entry-due');
         const impKey = renderRowElement(document.createTextNode('Priority'), 'th', 'col');
         impKey.classList.add('align-middle');
         thRow.append(checkKey, itemKey, dueDateKey, impKey);
 
         return table;
+}
+
+function sortTable(table, icon, rowIndex) {
+
+    //rowIndex relates to which column we are sorting on
+    //currently, only valid indices are 1, 2 (title, dueDate)
+    var rows, swapping, i, x, y, shouldSwap, ascending, swapCount = 0;
+
+    const sortState = icon.getAttribute('sortState');
+    if(sortState == 'unsorted' || sortState == 'descending') { ascending = true; }
+    else if(sortState == 'ascending') { ascending = false; }
+    // Note: If invalid entry passed, ascending will be undefined (false for eval purposes)
+    swapping = true;
+
+    while(swapping) {
+        //Start by saying no swapping is done
+        swapping = false;
+        rows = table.rows;
+
+        //Loop through all table rows, comparing for shouldSwap
+        //except first row, which is header
+        for (i = 1; i < (rows.length - 1); i++) {
+            //start by saying we shouldn't swap (default assumption)
+            shouldSwap = false;
+            //Compare two adjacent elements
+            x = rows[i].getElementsByTagName('td')[rowIndex];
+            y = rows[i+1].getElementsByTagName('td')[rowIndex];
+
+            //Evaluate on ascend/descend
+            if (ascending) {
+                if(x.innerText.toLowerCase() > y.innerText.toLowerCase()) {
+                    //should swap, so mark and break loop
+                    shouldSwap = true;
+                    break;
+                }
+            }
+            else { //descending sort
+                if(x.innerText.toLowerCase() < y.innerText.toLowerCase()) {
+                    //should swap, so mark and break
+                    shouldSwap = true;
+                    break;
+                }
+            }
+        }
+
+        if(shouldSwap) {
+            //If swap marked, make it happen then add to the swap count
+            rows[i].parentNode.insertBefore(rows[i+1], rows[i]);
+            swapping = true; //ensure the while loop continues
+            swapCount++;
+        }
+        else {
+            //If we made it thru the loop on ascending and swapped nothing
+            //it was already sorted, so we want to sort descending
+            if(swapCount == 0 && ascending == true) {
+                ascending = false;
+                swapping = true; //run loop again
+            } 
+        }
+    }
+
+    //Reset any other sort icons from previously sorted states
+    var headerIcons = rows[0].querySelectorAll('img');
+    headerIcons.forEach(image => {
+        image.setAttribute('src', chevronExpand);
+        image.setAttribute('sortState', 'unsorted');
+        image.setAttribute('class', 'me-1 sortIcon');
+    });
+
+    // Now change icon and sortState to reflect how we sorted
+    var domIcon = rows[0].getElementsByTagName('th')[rowIndex].firstChild;
+    if(ascending == true) { //do we have this backwards?
+        domIcon.setAttribute('src', chevronDoubleUp);
+        domIcon.setAttribute('sortState', 'ascending');
+        domIcon.setAttribute('class', 'me-1 pb-1 sortIcon');
+    }
+    else if (ascending == false) {
+        domIcon.setAttribute('src', chevronDoubleDown);
+        domIcon.setAttribute('sortState', 'descending');
+        domIcon.setAttribute('class', 'me-1 pt-1 sortIcon');
+    }
+
 }
 
 function renderTableBody(todoList) {
@@ -94,6 +185,76 @@ function renderTableRow(Todo, listIndex) {
     return entryContainer;
 }
 
+// ***TABLE ELEMENT RENDERING FUNCTIONS***
+
+function renderRowElement(entry, type, scope) {
+    const element = document.createElement(type);
+    
+    if(scope) {element.setAttribute('scope', scope)}
+    element.appendChild(entry);
+
+    return element;
+}
+
+function renderIcon(icon, size, alt='icon', classes) {
+    const image = new Image();
+    image.src = icon;
+    image.setAttribute('alt', alt);
+    image.setAttribute('sortState', alt);
+    image.setAttribute('width', size);
+    image.setAttribute('height', size);
+    
+    if(classes) { image.setAttribute('class', classes); }
+    return image;
+}
+
+function renderCheckBox(listIndex) {
+    const checkContainer = document.createElement('div');
+    checkContainer.setAttribute('class', 'form-check');
+    
+    const checkBox = document.createElement('input');
+    checkBox.setAttribute('class', 'form-check-input ms-1 me-3');
+    checkBox.setAttribute('type', 'checkBox');
+    checkBox.setAttribute('value', '');
+
+    if(!listIndex) {
+        const id = 'checkbox-' + listIndex;
+        checkBox.setAttribute('id', id);
+    }
+    else {
+        checkBox.setAttribute('id', 'placeholder');
+    }
+
+    //When Checked, delete the item
+    //Note, we will likely need to move this to controller/index -- some kind of refactoring
+    checkBox.addEventListener('change', () => {
+        if(checkBox.checked) {
+            const tableRow = checkBox.parentNode.parentNode.parentNode;
+
+            //Perhaps animate the deletion -- highlight the row and fade it out or something?
+            deleteTableRow(tableRow);
+        }
+    })
+
+    checkContainer.append(checkBox);
+    return checkContainer;
+}
+
+function deleteTableRow(tableRow) {
+    const entry = tableRow.childNodes[1].innerText;
+    tableRow.parentNode.removeChild(tableRow);
+    console.log("Sucessfully Removed Entry: " + tableRow.childNodes[1].innerText);
+}
+
+function deleteAllTableRows(tableBody) {
+    while(tableBody.firstChild) {
+        //tableBody.removeChild(tableBody.lastChild);
+        deleteTableRow(tableBody.lastChild);
+    }
+}
+
+// ***ENTRY EDIT MODALS FUNCTIONS***
+
 function renderInputAndLabel(inputId, inputType, labelText) {
     const container = document.createElement('div');
     container.setAttribute('class', 'mb-3');
@@ -104,9 +265,8 @@ function renderInputAndLabel(inputId, inputType, labelText) {
     label.innerText = labelText;
 
     let input = document.createElement('input');
-    //override tag to textarea if we have a tetarea
+    //override tag type to textarea if we have a tetarea
     if(inputType == 'textarea') {
-        //input.parentNode.removeChild(input);
         input = document.createElement('textarea');
     }
 
@@ -133,7 +293,6 @@ function renderDetailModal(entry, index) {
     details.setAttribute('data-bs-backdrop', 'static');
     details.setAttribute('data-bs-keyboard', 'false');
     details.setAttribute('tabindex', '-1');
-    //details.setAttribute('aria-labelledby', 'staticBackdropLabel');
     details.setAttribute('aria-hidden', 'true');
 
     const dialog = document.createElement('div');
@@ -184,56 +343,4 @@ function renderDetailModal(entry, index) {
     details.appendChild(dialog);
 
     return details;
-}
-
-function renderRowElement(entry, type, scope) {
-    const element = document.createElement(type);
-    
-    if(scope) {element.setAttribute('scope', scope)}
-    element.appendChild(entry);
-
-    return element;
-}
-
-function renderIcon(icon, size, alt='icon', classes) {
-    const image = new Image();
-    image.src = icon;
-    image.setAttribute('alt', alt);
-    image.setAttribute('width', size);
-    image.setAttribute('height', size);
-    
-    if(classes) { image.setAttribute('class', classes); }
-    return image;
-}
-
-function renderCheckBox(listIndex) {
-    const checkContainer = document.createElement('div');
-    checkContainer.setAttribute('class', 'form-check');
-    
-    const checkBox = document.createElement('input');
-    checkBox.setAttribute('class', 'form-check-input ms-1 me-3');
-    checkBox.setAttribute('type', 'checkBox');
-    checkBox.setAttribute('value', '');
-
-    if(!listIndex) {
-        const id = 'checkbox-' + listIndex;
-        checkBox.setAttribute('id', id);
-    }
-    else {
-        checkBox.setAttribute('id', 'placeholder');
-    }
-
-    //When Checked, delete the item
-    checkBox.addEventListener('change', () => {
-        if(checkBox.checked) {
-            const tableRow = checkBox.parentNode.parentNode.parentNode;
-
-            //Perhaps animate the deletion -- highlight the row and fade it out or something?
-            console.log("Removing: " + tableRow.childNodes[1].innerText);
-            tableRow.parentNode.removeChild(tableRow);
-        }
-    })
-
-    checkContainer.append(checkBox);
-    return checkContainer;
 }

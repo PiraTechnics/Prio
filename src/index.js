@@ -4,7 +4,7 @@ import './scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 
 import { Todo } from "./todoModel";
-import { deleteTableRows, renderList } from "./listView";
+import { renderList } from "./listView";
 
 // To-Do Item DOM manupulation to add entries onto our page
 //hardcoded for now 
