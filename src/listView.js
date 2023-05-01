@@ -94,6 +94,38 @@ function renderTableRow(Todo, listIndex) {
     return entryContainer;
 }
 
+function renderInputAndLabel(inputId, inputType, labelText) {
+    const container = document.createElement('div');
+    container.setAttribute('class', 'mb-3');
+    
+    const label = document.createElement('label');
+    label.setAttribute('class', 'form-label');
+    label.setAttribute('for', inputId);
+    label.innerText = labelText;
+
+    let input = document.createElement('input');
+    //override tag to textarea if we have a tetarea
+    if(inputType == 'textarea') {
+        //input.parentNode.removeChild(input);
+        input = document.createElement('textarea');
+    }
+
+    input.setAttribute('class', 'form-control');
+    input.setAttribute('id', inputId);
+    input.setAttribute('type', inputType);
+
+    // Set different classes for checkboxes
+    if(inputType == 'checkbox') {
+        label.setAttribute('class', 'form-check-label px-1 ms-3' );
+        input.setAttribute('class', 'form-check-input ps-2');
+        container.classList.add('d-inline');
+    }
+
+    container.append(label, input);
+
+    return container;
+}
+
 function renderDetailModal(entry, index) {
     const details = document.createElement('div');
     details.setAttribute('class', 'modal fade');
@@ -119,6 +151,21 @@ function renderDetailModal(entry, index) {
 
     const body = document.createElement('div');
     body.setAttribute('class', 'modal-body');
+    const form = document.createElement('form');
+    const description = renderInputAndLabel('entryDescription', 'textarea', 'Details');
+    const priority = renderInputAndLabel('entryPriority' , 'checkbox', 'Important?');
+    const urgent = renderInputAndLabel('entryUrgency', 'checkbox', 'Urgent?');
+    const dueDate = renderInputAndLabel('entryDueDate', 'date', 'Due');
+    
+    const gridRow = document.createElement('div');
+    gridRow.setAttribute('class', 'row');
+    const gridCol = document.createElement('div');
+    gridCol.setAttribute('class', 'col col-md-6');
+    gridCol.append(dueDate, priority, urgent);
+    gridRow.appendChild(gridCol);
+    
+    form.append(description, gridRow);
+    body.appendChild(form);
 
     const footer = document.createElement('div');
     footer.setAttribute('class', 'modal-footer');
@@ -166,7 +213,7 @@ function renderCheckBox(listIndex) {
     const checkBox = document.createElement('input');
     checkBox.setAttribute('class', 'form-check-input ms-1 me-3');
     checkBox.setAttribute('type', 'checkBox');
-    checkBox.setAttribute('vlaue', '');
+    checkBox.setAttribute('value', '');
 
     if(!listIndex) {
         const id = 'checkbox-' + listIndex;
