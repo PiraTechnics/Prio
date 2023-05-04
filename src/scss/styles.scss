@@ -34,11 +34,11 @@ div.listContainer {
     margin-bottom: 1px;
 }
 
-.sortIcon:hover, .sortIcon:active {
+.clickableIcon:hover, .clickable:active {
     border: 1.5px solid gray;
     border-radius: 3px;
 }
 
-.sortIcon:active {
+.clickableIcon:active {
     background-color: lightgray; 
  }

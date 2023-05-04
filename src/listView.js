@@ -4,6 +4,7 @@ import alarmIcon from './assets/alarm.svg';
 import chevronExpand from './assets/chevron-expand.svg';
 import chevronDoubleUp from './assets/chevron-double-up.svg';
 import chevronDoubleDown from './assets/chevron-double-down.svg';
+import plus from './assets/plus.svg';
 
 // ***MAIN TABLE RENDER FUNCTION***
 export function renderList(todoList, name) {
@@ -33,11 +34,15 @@ function renderTableHeader() {
         table.append(th);
     
         //Create and add Header Row to Table
-        const checkBox = renderCheckBox('placeholder');
-        checkBox.classList.add('invisible');
-        const checkKey = renderRowElement(checkBox, 'th', 'col');
+        const newEntryIcon = renderIcon(plus, 25, 'Plus Icon', 'ms-4 newEntryIcon clickableIcon');
+        const newEntryKey = renderRowElement(newEntryIcon, 'th', 'col');
+        newEntryIcon.addEventListener('click', () => {
+            alert('You thought it was a new entry, but it was ME, DIO!');
+            // Need to open a 'new entry' modal, consider modifying our edit one
+        });
+
         const itemKey = renderRowElement(document.createTextNode('To-Do'), 'th', 'col');
-        let sortIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon');
+        let sortIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickableIcon');
         sortIcon.addEventListener('click', () => {
             sortTable(table, sortIcon, 1);
         })
@@ -45,7 +50,7 @@ function renderTableHeader() {
         itemKey.classList.add('align-middle');
         itemKey.setAttribute('id', 'entry-title');
         const dueDateKey = renderRowElement(document.createTextNode('Due'), 'th', 'col');
-        let dueDateIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon');
+        let dueDateIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickableIcon');
         dueDateIcon.addEventListener('click', () => {
             sortTable(table, dueDateIcon, 2);
         });
@@ -54,7 +59,7 @@ function renderTableHeader() {
         dueDateKey.setAttribute('id', 'entry-due');
         const impKey = renderRowElement(document.createTextNode('Priority'), 'th', 'col');
         impKey.classList.add('align-middle');
-        thRow.append(checkKey, itemKey, dueDateKey, impKey);
+        thRow.append(newEntryKey, itemKey, dueDateKey, impKey);
 
         return table;
 }
@@ -119,11 +124,11 @@ function sortTable(table, icon, rowIndex) {
     }
 
     //Reset any other sort icons from previously sorted states
-    var headerIcons = rows[0].querySelectorAll('img');
-    headerIcons.forEach(image => {
+    var sortIcons = rows[0].querySelectorAll('.sortIcon');
+    sortIcons.forEach(image => {
         image.setAttribute('src', chevronExpand);
         image.setAttribute('sortState', 'unsorted');
-        image.setAttribute('class', 'me-1 sortIcon');
+        image.setAttribute('class', 'me-1 sortIcon clickableIcon');
     });
 
     // Now change icon and sortState to reflect how we sorted
@@ -131,12 +136,12 @@ function sortTable(table, icon, rowIndex) {
     if(ascending == true) { //do we have this backwards?
         domIcon.setAttribute('src', chevronDoubleUp);
         domIcon.setAttribute('sortState', 'ascending');
-        domIcon.setAttribute('class', 'me-1 pb-1 sortIcon');
+        domIcon.setAttribute('class', 'me-1 pb-1 sortIcon clickableIcon');
     }
     else if (ascending == false) {
         domIcon.setAttribute('src', chevronDoubleDown);
         domIcon.setAttribute('sortState', 'descending');
-        domIcon.setAttribute('class', 'me-1 pt-1 sortIcon');
+        domIcon.setAttribute('class', 'me-1 pt-1 sortIcon clickableIcon');
     }
 
 }
