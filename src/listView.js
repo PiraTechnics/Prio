@@ -6,6 +6,8 @@ import chevronDoubleUp from './assets/chevron-double-up.svg';
 import chevronDoubleDown from './assets/chevron-double-down.svg';
 import plus from './assets/plus.svg';
 
+import * as storage from "./listController";
+
 // ***MAIN TABLE RENDER FUNCTION***
 export function renderList(todoList) {
     const listContainer = document.createElement('div');
@@ -223,13 +225,9 @@ function renderCheckBox(listIndex) {
     checkBox.setAttribute('type', 'checkBox');
     checkBox.setAttribute('value', '');
 
-    if(!listIndex) {
-        const id = 'checkbox-' + listIndex;
-        checkBox.setAttribute('id', id);
-    }
-    else {
-        checkBox.setAttribute('id', 'placeholder');
-    }
+    const id = 'checkbox-' + listIndex;
+    checkBox.setAttribute('id', id);
+    checkBox.setAttribute('data-index', listIndex);
 
     //When Checked, delete the item
     //Note, we will likely need to move this to controller/index -- some kind of refactoring
@@ -239,6 +237,7 @@ function renderCheckBox(listIndex) {
 
             //Perhaps animate the deletion -- highlight the row and fade it out or something?
             deleteTableRow(tableRow);
+            storage.deleteTodo(listIndex);
         }
     })
 
@@ -249,6 +248,7 @@ function renderCheckBox(listIndex) {
 function deleteTableRow(tableRow) {
     const entry = tableRow.childNodes[1].innerText;
     tableRow.parentNode.removeChild(tableRow);
+    
     console.log("Sucessfully Removed Entry: " + tableRow.childNodes[1].innerText);
 }
 

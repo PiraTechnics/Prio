@@ -7,7 +7,6 @@ export class Todo {
         
         if(dueDate) {
             this.dueDate = new Date(dueDate);
-            console.log("Due Date: " + dueDate);
         }
         else {
             //Set Today's date as default (FOR NOW)
@@ -24,7 +23,10 @@ export class Todo {
     get description() { return this._description; }
     set description(newDesc) { this._description = newDesc; }
 
-    get dueDate() { return format(this._dueDate, 'MM/dd/yy'); }
+    get dueDate() {
+        const date = Date.parse(this._dueDate);
+        return format(date, 'MM/dd/yy');
+    }
     set dueDate(newDate) { this._dueDate = newDate; }
 
     get priority() { return this._priority; }
@@ -32,4 +34,8 @@ export class Todo {
 
     get urgent() { return this._priority; }
     set urgent(newUrg) { this._urgent = newUrg; }
+
+    static fromJSON(json) {
+        return Object.assign(new Todo(), json);
+    }
 }
