@@ -1,6 +1,6 @@
 // Import our custom CSS
 import './scss/styles.scss'
-// Import all of Bootstrap's JS -- NOTE: We maaay not need this, check back later
+// Import all of Bootstrap's JS
 import * as bootstrap from 'bootstrap'
 
 import { Todo } from "./todoModel";
@@ -17,7 +17,7 @@ const item3 = new Todo('Plot World Domination');
 const myList = [];
 myList.push(item1, item2, item3);
 
-container.appendChild(renderList(myList, 'Default List'));
+container.appendChild(renderList(myList));
 
 
 //Testing Deletion

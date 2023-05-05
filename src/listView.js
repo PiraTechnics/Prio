@@ -7,7 +7,7 @@ import chevronDoubleDown from './assets/chevron-double-down.svg';
 import plus from './assets/plus.svg';
 
 // ***MAIN TABLE RENDER FUNCTION***
-export function renderList(todoList, name) {
+export function renderList(todoList) {
     const listContainer = document.createElement('div');
     listContainer.setAttribute('class', 'listContainer');
 
@@ -36,10 +36,11 @@ function renderTableHeader() {
         //Create and add Header Row to Table
         const newEntryIcon = renderIcon(plus, 25, 'Plus Icon', 'ms-4 newEntryIcon clickableIcon');
         const newEntryKey = renderRowElement(newEntryIcon, 'th', 'col');
-        newEntryIcon.addEventListener('click', () => {
-            alert('You thought it was a new entry, but it was ME, DIO!');
-            // Need to open a 'new entry' modal, consider modifying our edit one
-        });
+        // Need to open a 'new entry' modal, using next available index for a todo
+        newEntryIcon.classList.add('clickable');
+        newEntryIcon.setAttribute('data-bs-toggle', 'modal');
+        newEntryIcon.setAttribute('data-bs-target', '#staticBackdropNew'); 
+        document.body.appendChild(renderDetailModal('New To-Do', 'New'));
 
         const itemKey = renderRowElement(document.createTextNode('To-Do'), 'th', 'col');
         let sortIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickableIcon');
@@ -185,7 +186,7 @@ function renderTableRow(Todo, listIndex) {
     entryTitle.classList.add('clickable');
     entryTitle.setAttribute('data-bs-toggle', 'modal');
     entryTitle.setAttribute('data-bs-target', '#staticBackdrop' + listIndex);
-    entryContainer.appendChild(renderDetailModal(Todo, listIndex));
+    document.body.appendChild(renderDetailModal(Todo.title, listIndex));
 
     return entryContainer;
 }
@@ -258,7 +259,7 @@ function deleteAllTableRows(tableBody) {
     }
 }
 
-// ***ENTRY EDIT MODALS FUNCTIONS***
+// ***ENTRY/EDIT MODALS FUNCTIONS***
 
 function renderInputAndLabel(inputId, inputType, labelText) {
     const container = document.createElement('div');
@@ -291,7 +292,7 @@ function renderInputAndLabel(inputId, inputType, labelText) {
     return container;
 }
 
-function renderDetailModal(entry, index) {
+function renderDetailModal(title, index) {
     const details = document.createElement('div');
     details.setAttribute('class', 'modal fade');
     details.setAttribute('id', 'staticBackdrop' + index);
@@ -310,12 +311,13 @@ function renderDetailModal(entry, index) {
     header.setAttribute('class', 'modal-header justify-content-center');
     const headerText = document.createElement('h1');
     headerText.setAttribute('class', 'modal-title fs-5');
-    headerText.innerText = entry.title;
+    headerText.innerText = title;
     header.appendChild(headerText);
 
     const body = document.createElement('div');
     body.setAttribute('class', 'modal-body');
     const form = document.createElement('form');
+    const name = renderInputAndLabel('entryName', 'textfield', 'Name');
     const description = renderInputAndLabel('entryDescription', 'textarea', 'Details');
     const priority = renderInputAndLabel('entryPriority' , 'checkbox', 'Important?');
     const urgent = renderInputAndLabel('entryUrgency', 'checkbox', 'Urgent?');
@@ -328,7 +330,7 @@ function renderDetailModal(entry, index) {
     gridCol.append(dueDate, priority, urgent);
     gridRow.appendChild(gridCol);
     
-    form.append(description, gridRow);
+    form.append(name, description, gridRow);
     body.appendChild(form);
 
     const footer = document.createElement('div');
@@ -347,5 +349,15 @@ function renderDetailModal(entry, index) {
     dialog.appendChild(content);
     details.appendChild(dialog);
 
+    saveButton.addEventListener('click', () => {
+        submitChanges(details);
+    })
+
     return details;
+}
+
+function submitChanges(formDetails) {
+
+    console.log(JSON.stringify(formDetails));
+    //Just for fun and logging for now
 }
