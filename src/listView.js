@@ -45,7 +45,7 @@ function renderTableHeader() {
         document.body.appendChild(renderDetailModal('New To-Do', 'New'));
 
         const itemKey = renderRowElement(document.createTextNode('To-Do'), 'th', 'col');
-        let sortIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickableIcon');
+        let sortIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickable clickableIcon');
         sortIcon.addEventListener('click', () => {
             sortTable(table, sortIcon, 1);
         })
@@ -53,7 +53,7 @@ function renderTableHeader() {
         itemKey.classList.add('align-middle');
         itemKey.setAttribute('id', 'entry-title');
         const dueDateKey = renderRowElement(document.createTextNode('Due'), 'th', 'col');
-        let dueDateIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickableIcon');
+        let dueDateIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickable clickableIcon');
         dueDateIcon.addEventListener('click', () => {
             sortTable(table, dueDateIcon, 2);
         });
@@ -176,6 +176,10 @@ function renderTableRow(Todo, listIndex) {
     const exclam = renderIcon(exclamIcon, 30, 'Exclamation Mark');
     const alarm = renderIcon(alarmIcon, 25, 'Alarm Clock');
 
+    //if not urgent/important, make the relevant icon invisible
+    if(!Todo.priority) {exclam.classList.add('invisible');}
+    if(!Todo.urgent) {alarm.classList.add('invisible');}
+
     const impWrapper = document.createElement('div');
     impWrapper.append(exclam, alarm);
     const entryImp = renderRowElement(impWrapper, 'td');
@@ -221,7 +225,7 @@ function renderCheckBox(listIndex) {
     checkContainer.setAttribute('class', 'form-check');
     
     const checkBox = document.createElement('input');
-    checkBox.setAttribute('class', 'form-check-input ms-1 me-3');
+    checkBox.setAttribute('class', 'form-check-input ms-1 me-3 clickable');
     checkBox.setAttribute('type', 'checkBox');
     checkBox.setAttribute('value', '');
 

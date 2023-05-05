@@ -11,9 +11,9 @@ import * as storage from "./listController";
 //hardcoded for now 
 const container = document.querySelector('.container');
 
-const item1 = new Todo('Clean Kitchen', 'something something', '7-4-2023', true, false);
-const item2 = new Todo('Do Taxes');
-const item3 = new Todo('Plot World Domination');
+const item1 = new Todo('Clean Kitchen', 'something something', '7-4-2023', true, true);
+const item2 = new Todo('Do Taxes', 'left intentionally blank', '8-8-2022', false, true);
+const item3 = new Todo('Plot World Domination', 'pretty self explanatory, tbh', '9/9/2024', true, false);
 
 localStorage.clear(); //reset each time (for now)
 

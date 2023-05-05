@@ -32,7 +32,7 @@ export class Todo {
     get priority() { return this._priority; }
     set priority(newPrio) { this._priority = newPrio; }
 
-    get urgent() { return this._priority; }
+    get urgent() { return this._urgent; }
     set urgent(newUrg) { this._urgent = newUrg; }
 
     static fromJSON(json) {
