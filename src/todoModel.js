@@ -21,7 +21,7 @@ export class Todo {
     }
     get dueDate() {
         const date = Date.parse(this._dueDate);
-        return format(date, 'MM/dd/yy');
+        return format(date, 'MM/dd/yyyy');
     }
     set dueDate(newDate) { this._dueDate = newDate; }
     

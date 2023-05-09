@@ -35,16 +35,13 @@ export function submitChanges(form) {
     const index = form.getAttribute('data-index');
     const name = form.querySelector('#entryName').value;
     const details = form.querySelector('#entryDescription').value;
-    const date = form.querySelector('#entryDueDate').value;
+    const date = form.querySelector('#entryDueDate').value.replaceAll('-', '/');
     const important = form.querySelector('#entryPriority').checked;
     const urgent = form.querySelector('#entryUrgency').checked;
 
-    //WIP -- Need to format date value for correct processing
-    //let date = form.querySelector('#entryDueDate').value;
-    //date = format(new Date(date), 'MM-dd-yyyy');
-
     if(index == 'New') {
         createTodo(name, details, date, important, urgent);
+        form.reset();
     }
 
     else if(!isNaN(index)) { //confirm it's a number

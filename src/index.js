@@ -11,7 +11,7 @@ import * as storage from "./listController";
 const container = document.querySelector('.container');
 
 
-let myList = [];
+/* let myList = [];
 
 localStorage.clear(); //reset each time (for now)
 storage.createTodo('Clean Kitchen', 'something something', '7-4-2023', true, true);
@@ -24,8 +24,9 @@ for (let i = 0; i < localStorage.length; i++) {
   myList.push(storedEntry)
 }
 
-container.appendChild(renderList(myList));
-//container.appendChild(renderList(storage.getAllEntries()));
+container.appendChild(renderList(myList)); */
+
+container.appendChild(renderList(storage.getAllEntries()));
 
 //Testing Deletion
 

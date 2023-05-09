@@ -158,8 +158,6 @@ function renderTableBody(todoList) {
     //Add all entries from list in order
     for(let i = 0; i < todoList.length; i++) {
         tBody.appendChild(renderTableRow(todoList[i], i));
-        console.log("Entry added: " + JSON.stringify(todoList[i]));
-        console.log(todoList[i]);
     }
 
     return tBody;
@@ -249,8 +247,6 @@ function renderCheckBox(listIndex) {
 function deleteTableRow(tableRow) {
     const entry = tableRow.childNodes[1].innerText;
     tableRow.parentNode.removeChild(tableRow);
-    
-    console.log("Sucessfully Removed Entry: " + tableRow.childNodes[1].innerText);
 }
 
 function deleteAllTableRows(tableBody) {
