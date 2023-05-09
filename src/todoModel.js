@@ -1,18 +1,10 @@
 import { format } from 'date-fns'
 
 export class Todo {
-    constructor(title, description, dueDate, priority=false, urgent=false) {
+    constructor(title, description, dueDate = new Date(), priority=false, urgent=false) {
         this.title = title;
         this.description = description;
-        
-        if(dueDate) {
-            this.dueDate = new Date(dueDate);
-        }
-        else {
-            //Set Today's date as default (FOR NOW)
-            this.dueDate = new Date();
-        }
-        
+        this.dueDate = dueDate;
         this.priority = priority;
         this.urgent = urgent;
     }
@@ -23,11 +15,16 @@ export class Todo {
     get description() { return this._description; }
     set description(newDesc) { this._description = newDesc; }
 
+    get formDate() {
+        const date = Date.parse(this._dueDate);
+        return format(date, 'yyyy-MM-dd');
+    }
     get dueDate() {
         const date = Date.parse(this._dueDate);
         return format(date, 'MM/dd/yy');
     }
     set dueDate(newDate) { this._dueDate = newDate; }
+    
 
     get priority() { return this._priority; }
     set priority(newPrio) { this._priority = newPrio; }

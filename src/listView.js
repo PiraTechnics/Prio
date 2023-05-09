@@ -7,6 +7,7 @@ import chevronDoubleDown from './assets/chevron-double-down.svg';
 import plus from './assets/plus.svg';
 
 import * as storage from "./listController";
+import { Todo } from './todoModel';
 
 // ***MAIN TABLE RENDER FUNCTION***
 export function renderList(todoList) {
@@ -158,27 +159,23 @@ function renderTableBody(todoList) {
     for(let i = 0; i < todoList.length; i++) {
         tBody.appendChild(renderTableRow(todoList[i], i));
         console.log("Entry added: " + JSON.stringify(todoList[i]));
+        console.log(todoList[i]);
     }
 
     return tBody;
 }
 
-function renderTableRow(Todo, listIndex) {
+function renderTableRow(todo, listIndex) {
     const entryContainer = document.createElement('tr');
     const entryCheckBox = renderRowElement(renderCheckBox(listIndex), 'td');
-    const entryTitle = renderRowElement(document.createTextNode(Todo.title), 'td');
-    
-    // Leave blank if undefined (or other default)
-    //TODO: Change to be a date
-    const entryDue = renderRowElement(document.createTextNode(Todo.dueDate), 'td');
-
-    // TODO: Render each only IF associated boolean is ticked
+    const entryTitle = renderRowElement(document.createTextNode(todo.title), 'td');
+    const entryDue = renderRowElement(document.createTextNode(todo.dueDate), 'td');
     const exclam = renderIcon(exclamIcon, 30, 'Exclamation Mark');
     const alarm = renderIcon(alarmIcon, 25, 'Alarm Clock');
 
     //if not urgent/important, make the relevant icon invisible
-    if(!Todo.priority) {exclam.classList.add('invisible');}
-    if(!Todo.urgent) {alarm.classList.add('invisible');}
+    if(!todo.priority) {exclam.classList.add('invisible');}
+    if(!todo.urgent) {alarm.classList.add('invisible');}
 
     const impWrapper = document.createElement('div');
     impWrapper.append(exclam, alarm);
@@ -192,7 +189,7 @@ function renderTableRow(Todo, listIndex) {
     entryTitle.classList.add('clickable');
     entryTitle.setAttribute('data-bs-toggle', 'modal');
     entryTitle.setAttribute('data-bs-target', '#staticBackdrop' + listIndex);
-    document.body.appendChild(renderDetailModal(Todo.title, listIndex));
+    document.body.appendChild(renderDetailModal(todo.title, listIndex));
 
     return entryContainer;
 }
@@ -265,7 +262,7 @@ function deleteAllTableRows(tableBody) {
 
 // ***ENTRY/EDIT MODALS FUNCTIONS***
 
-function renderInputAndLabel(inputId, inputType, labelText) {
+function renderInputAndLabel(inputId, inputType, labelText, prefilled='') {
     const container = document.createElement('div');
     container.setAttribute('class', 'mb-3');
     
@@ -273,8 +270,8 @@ function renderInputAndLabel(inputId, inputType, labelText) {
     label.setAttribute('class', 'form-label');
     label.setAttribute('for', inputId);
     label.innerText = labelText;
-
     let input = document.createElement('input');
+    
     //override tag type to textarea if we have a tetarea
     if(inputType == 'textarea') {
         input = document.createElement('textarea');
@@ -289,14 +286,22 @@ function renderInputAndLabel(inputId, inputType, labelText) {
         label.setAttribute('class', 'form-check-label px-1 ms-3' );
         input.setAttribute('class', 'form-check-input ps-2');
         container.classList.add('d-inline');
+        input.checked = prefilled;
     }
 
+    input.defaultValue = prefilled;
     container.append(label, input);
 
     return container;
 }
 
 function renderDetailModal(title, index) {
+    var entry = Todo.fromJSON(storage.readTodo(index));
+    if (!entry) {
+        //New entry form
+        entry = new Todo('test', ''); //set name and description as blank strings
+    }
+    
     const details = document.createElement('div');
     details.setAttribute('class', 'modal fade');
     details.setAttribute('id', 'staticBackdrop' + index);
@@ -311,57 +316,73 @@ function renderDetailModal(title, index) {
     const content = document.createElement('div');
     content.setAttribute('class', 'modal-content');
 
+    const form = document.createElement('form');
+    form.setAttribute('name', 'modal-form-' + index);
+    form.setAttribute('method', 'POST');
+    form.setAttribute('data-index', index);
+    const name = renderInputAndLabel('entryName', 'textfield', 'Name', entry.title);
+    const description = renderInputAndLabel('entryDescription', 'textarea', 'Details', entry.description);
+    const priority = renderInputAndLabel('entryPriority' , 'checkbox', 'Important?', entry.priority);
+    const urgent = renderInputAndLabel('entryUrgency', 'checkbox', 'Urgent?', entry.urgent);
+    const dueDate = renderInputAndLabel('entryDueDate', 'date', 'Due', entry.formDate);
+
     const header = document.createElement('div');
     header.setAttribute('class', 'modal-header justify-content-center');
     const headerText = document.createElement('h1');
     headerText.setAttribute('class', 'modal-title fs-5');
     headerText.innerText = title;
     header.appendChild(headerText);
-
+    
     const body = document.createElement('div');
     body.setAttribute('class', 'modal-body');
-    const form = document.createElement('form');
-    const name = renderInputAndLabel('entryName', 'textfield', 'Name');
-    const description = renderInputAndLabel('entryDescription', 'textarea', 'Details');
-    const priority = renderInputAndLabel('entryPriority' , 'checkbox', 'Important?');
-    const urgent = renderInputAndLabel('entryUrgency', 'checkbox', 'Urgent?');
-    const dueDate = renderInputAndLabel('entryDueDate', 'date', 'Due');
-    
     const gridRow = document.createElement('div');
     gridRow.setAttribute('class', 'row');
     const gridCol = document.createElement('div');
     gridCol.setAttribute('class', 'col col-md-6');
     gridCol.append(dueDate, priority, urgent);
     gridRow.appendChild(gridCol);
+    body.append(name, description, gridRow);
     
-    form.append(name, description, gridRow);
-    body.appendChild(form);
 
     const footer = document.createElement('div');
     footer.setAttribute('class', 'modal-footer');
-    
     const saveButton = document.createElement('button');
+    saveButton.setAttribute('type', 'submit');
     saveButton.setAttribute('class', 'btn btn-primary');
-    saveButton.innerText = 'Save Changes';
+    saveButton.setAttribute('data-bs-dismiss', 'modal');
+    saveButton.innerText = 'Save';
     const exitButton = document.createElement('button');
+    exitButton.setAttribute('type', 'button');
     exitButton.setAttribute('class', 'btn btn-secondary');
     exitButton.setAttribute('data-bs-dismiss', 'modal');
     exitButton.innerText = 'Exit';
-
     footer.append(exitButton, saveButton);
-    content.append(header, body, footer);
+
+    form.append(header, body, footer);
+    content.appendChild(form);
     dialog.appendChild(content);
     details.appendChild(dialog);
 
-    saveButton.addEventListener('click', () => {
-        submitChanges(details);
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        storage.submitChanges(form);
+        const tableBody = document.querySelector('tbody');
+        let index = form.getAttribute('data-index')
+        
+        if(isNaN(index)) {
+            // add entry at end -- new item (need more detail if multiple tables)
+            index = tableBody.childNodes.length;
+            tableBody.appendChild(renderTableRow(storage.readTodo(index), index));
+        }
+        else {
+            //update entry, remove old data row and insert new one in its place
+            const oldRow = tableBody.childNodes[index];
+            const newRow = renderTableRow(storage.readTodo(index), index);
+            tableBody.insertBefore(newRow, oldRow);
+            deleteTableRow(oldRow);
+        }
     })
 
     return details;
-}
-
-function submitChanges(formDetails) {
-
-    console.log(JSON.stringify(formDetails));
-    //Just for fun and logging for now
 }
