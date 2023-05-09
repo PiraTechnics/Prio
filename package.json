@@ -1,11 +1,13 @@
 {
   "name": "prio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An application to help you prioritize whatcha need to get done",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
+    "build": "webpack --mode=development",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "start": "webpack serve --open"
   },
   "repository": {
@@ -22,6 +24,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "css-loader": "^6.7.3",
+    "gh-pages": "^5.0.0",
     "html-webpack-plugin": "^5.5.1",
     "postcss-loader": "^7.2.4",
     "sass": "^1.62.1",
