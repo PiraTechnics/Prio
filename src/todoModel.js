@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 
 export class Todo {
-    constructor(title, description, dueDate = new Date(), priority=false, urgent=false) {
+    constructor(title, description='', dueDate = new Date(), priority = false, urgent = false) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;

@@ -1,13 +1,9 @@
 // Helper Module for Rendering and Manipulating our Bootstrap-classed Table
-import exclamIcon from './assets/exclamation-lg.svg';
-import alarmIcon from './assets/alarm.svg';
 import chevronExpand from './assets/chevron-expand.svg';
 import chevronDoubleUp from './assets/chevron-double-up.svg';
 import chevronDoubleDown from './assets/chevron-double-down.svg';
 import plus from './assets/plus.svg';
-
-import { renderRowElement, renderIcon, renderCheckBox } from './tableElements';
-import { renderDetailModal } from './modal';
+import { renderTableRow, deleteTableRow, renderEntryEditModal, renderRowElement, renderIcon } from './tableElements';
 
 export function renderTableHeader() {
     //Create Table and link structure in DOM
@@ -26,8 +22,9 @@ export function renderTableHeader() {
     // Need to open a 'new entry' modal, using next available index for a todo
     newEntryIcon.classList.add('clickable');
     newEntryIcon.setAttribute('data-bs-toggle', 'modal');
-    newEntryIcon.setAttribute('data-bs-target', '#staticBackdropNew');
-    document.body.appendChild(renderDetailModal('New To-Do', 'New'));
+    newEntryIcon.setAttribute('data-bs-target', '#staticBackdrop');
+    newEntryIcon.setAttribute('data-bs-index', -1);
+    //document.body.appendChild(renderDetailModal('New To-Do', 'New'));
 
     const itemKey = renderRowElement(document.createTextNode('To-Do'), 'th', 'col');
     let sortIcon = renderIcon(chevronExpand, 20, 'unsorted', 'me-1 sortIcon clickable clickableIcon');
@@ -63,40 +60,6 @@ export function renderTableBody(todoList) {
     }
 
     return tBody;
-}
-
-export function renderTableRow(todo, listIndex) {
-    const entryContainer = document.createElement('tr');
-    const entryCheckBox = renderRowElement(renderCheckBox(listIndex), 'td');
-    const entryTitle = renderRowElement(document.createTextNode(todo.title), 'td');
-    const entryDue = renderRowElement(document.createTextNode(todo.dueDate), 'td');
-    const exclam = renderIcon(exclamIcon, 30, 'Exclamation Mark');
-    const alarm = renderIcon(alarmIcon, 25, 'Alarm Clock');
-
-    //if not urgent/important, make the relevant icon invisible
-    if (!todo.priority) { exclam.classList.add('invisible'); }
-    if (!todo.urgent) { alarm.classList.add('invisible'); }
-
-    const impWrapper = document.createElement('div');
-    impWrapper.append(exclam, alarm);
-    const entryImp = renderRowElement(impWrapper, 'td');
-
-    entryContainer.append(entryCheckBox, entryTitle, entryDue, entryImp);
-    entryContainer.classList.add('align-middle');
-    entryContainer.classList.add('entryRow');
-
-    //Add clickable functionality to Title, which brings up a description and editable forms in a modal
-    entryTitle.classList.add('clickable');
-    entryTitle.setAttribute('data-bs-toggle', 'modal');
-    entryTitle.setAttribute('data-bs-target', '#staticBackdrop' + listIndex);
-    document.body.appendChild(renderDetailModal(todo.title, listIndex));
-
-    return entryContainer;
-}
-
-export function deleteTableRow(tableRow) {
-    const entry = tableRow.childNodes[1].innerText;
-    tableRow.parentNode.removeChild(tableRow);
 }
 
 export function clearTable(tableBody) {
@@ -185,21 +148,4 @@ export function sortTable(table, icon, rowIndex) {
         domIcon.setAttribute('class', 'me-1 pt-1 sortIcon clickableIcon');
     }
 
-}
-
-//Fill details in when modal is triggered to open
-// Special behavior for 'new' entry -- no data to fill(?)
-//NOTE: Rename single modal to 'staticBackdrop'
-function bindModal() {
-    const modal = document.getElementById('staticBackdrop');
-    if(modal) {
-        modal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarged
-            const recipient = button.getAttribute('data-bs-index');
-
-            const modalTitle = modal.querySelector();
-            //WIP - Part of a refactor to create only a single modal for new/edit entries, and fill in info by pulling an index from the triggering button/text
-            //See https://getbootstrap.com/docs/5.3/components/modal/#varying-modal-content for useage and example code
-        });
-    }
 }

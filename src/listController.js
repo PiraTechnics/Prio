@@ -1,6 +1,5 @@
 // Module for localStorage Manipulation
 import { Todo } from "./todoModel";
-import { format } from 'date-fns';
 
 export function createTodo(title, description, dueDate, priority, urgency) {
     const key = localStorage.length;
@@ -29,17 +28,16 @@ export function getAllEntries() {
     return entries;
 }
 
-export function submitChanges(form) {
+export function submitChanges(form, index) {
     //Note: we should sanitize input and sanity check for 'no-change'
 
-    const index = form.getAttribute('data-index');
     const name = form.querySelector('#entryName').value;
     const details = form.querySelector('#entryDescription').value;
     const date = form.querySelector('#entryDueDate').value.replaceAll('-', '/');
     const important = form.querySelector('#entryPriority').checked;
     const urgent = form.querySelector('#entryUrgency').checked;
 
-    if(index == 'New') {
+    if(index == -1) {
         createTodo(name, details, date, important, urgent);
         form.reset();
     }
