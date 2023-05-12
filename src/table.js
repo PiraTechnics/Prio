@@ -186,3 +186,20 @@ export function sortTable(table, icon, rowIndex) {
     }
 
 }
+
+//Fill details in when modal is triggered to open
+// Special behavior for 'new' entry -- no data to fill(?)
+//NOTE: Rename single modal to 'staticBackdrop'
+function bindModal() {
+    const modal = document.getElementById('staticBackdrop');
+    if(modal) {
+        modal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarged
+            const recipient = button.getAttribute('data-bs-index');
+
+            const modalTitle = modal.querySelector();
+            //WIP - Part of a refactor to create only a single modal for new/edit entries, and fill in info by pulling an index from the triggering button/text
+            //See https://getbootstrap.com/docs/5.3/components/modal/#varying-modal-content for useage and example code
+        });
+    }
+}

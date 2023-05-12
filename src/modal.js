@@ -1,11 +1,12 @@
 //Helper Module to render Entry/Edit Modal for listView
 //Using Bootstrap classes
 
+import * as bootstrap from 'bootstrap';
 import { renderTableRow, deleteTableRow } from "./table";
 import * as storage from "./listController";
 import { Todo } from "./todoModel";
 
-function renderInputAndLabel(inputId, inputType, labelText, prefilled='') {
+function renderInputAndLabel(inputId, inputType, labelText, prefilled='', required=false) {
     const container = document.createElement('div');
     container.setAttribute('class', 'mb-3');
     
@@ -32,6 +33,7 @@ function renderInputAndLabel(inputId, inputType, labelText, prefilled='') {
         input.checked = prefilled;
     }
 
+    input.required = required;
     input.defaultValue = prefilled;
     container.append(label, input);
 
@@ -63,7 +65,7 @@ export function renderDetailModal(title, index) {
     form.setAttribute('name', 'modal-form-' + index);
     form.setAttribute('method', 'POST');
     form.setAttribute('data-index', index);
-    const name = renderInputAndLabel('entryName', 'textfield', 'Name', entry.title);
+    const name = renderInputAndLabel('entryName', 'textfield', 'Name', entry.title, true);
     const description = renderInputAndLabel('entryDescription', 'textarea', 'Details', entry.description);
     const priority = renderInputAndLabel('entryPriority' , 'checkbox', 'Important?', entry.priority);
     const urgent = renderInputAndLabel('entryUrgency', 'checkbox', 'Urgent?', entry.urgent);
@@ -92,7 +94,7 @@ export function renderDetailModal(title, index) {
     const saveButton = document.createElement('button');
     saveButton.setAttribute('type', 'submit');
     saveButton.setAttribute('class', 'btn btn-primary');
-    saveButton.setAttribute('data-bs-dismiss', 'modal');
+    //saveButton.setAttribute('data-bs-dismiss', 'modal');
     saveButton.innerText = 'Save';
     const exitButton = document.createElement('button');
     exitButton.setAttribute('type', 'button');
@@ -109,9 +111,19 @@ export function renderDetailModal(title, index) {
     form.addEventListener('submit', (event) => {
         event.preventDefault();
 
+        const modal = bootstrap.Modal.getInstance(form.parentElement.parentElement.parentElement);
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => {
+            if (!input.checkValidity()) {
+                return false;
+            }
+        });
+
+        modal.toggle();
+
         storage.submitChanges(form);
         const tableBody = document.querySelector('tbody');
-        let index = form.getAttribute('data-index')
+        let index = form.getAttribute('data-index');
         
         if(isNaN(index)) {
             // add entry at end -- new item (need more detail if multiple tables)
